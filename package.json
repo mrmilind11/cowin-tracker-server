@@ -4,7 +4,7 @@
   "description": "Track Vaccine Availability",
   "main": "index.js",
   "scripts": {
-    "start": "tsc node index.js",
+    "start": "node build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc"
   },
@@ -15,7 +15,8 @@
     "moment": "^2.29.1",
     "node-cron": "^3.0.0",
     "node-fetch": "^2.6.1",
-    "node-notifier": "^9.0.1"
+    "node-notifier": "^9.0.1",
+    "typescript": "^4.2.4"
   },
   "devDependencies": {
     "@types/express": "^4.17.11",
@@ -24,7 +25,6 @@
     "@types/node-cron": "^2.0.3",
     "@types/node-fetch": "^2.5.10",
     "@types/node-notifier": "^8.0.0",
-    "ts-node": "^9.1.1",
-    "typescript": "^4.2.4"
+    "ts-node": "^9.1.1"
   }
 }
