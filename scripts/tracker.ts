@@ -54,7 +54,7 @@ const prepareDistrictList = async () => {
 }
 const tracker = async () => {
     await prepareDistrictList();
-    cron.schedule('*/5 * * * * *', async () => {
+    cron.schedule('*/30 * * * * *', async () => {
         await prepareCentreList();
     })
 }
