@@ -1,12 +1,13 @@
 import http from 'http';
 import { Express } from 'express'
 
-const server = (app: Express) => {
+const serverInit = (app: Express): http.Server => {
     const port = process.env.PORT || 5000;
     const server = http.createServer(app);
     server.listen(port, () => {
         console.log(`Listening to port ${port}...`)
     })
+    return server;
 }
 
-export default server;
+export default serverInit;

@@ -3,6 +3,9 @@ import { IVaccineCentre } from '../model/vaccine-centre.interface';
 import { CowinService } from './../service/cowin.service';
 import cron from 'node-cron';
 import nodenotifier from 'node-notifier'
+import { emitToSocket } from './socket-server';
+
+const AVAIL_DETAIL = 'AVAIL_DETAIL';
 const STATE_CODE = 9; // 9 Delhi 12 Haryana
 const START_DATE = new Date();
 const MIN_AGE = 18;
@@ -22,27 +25,28 @@ const prepareCentreList = async () => {
             }
         }).filter(({ sessions }) => sessions.length > 0);
         console.log('Available Centre', availableCentreList.length);
-        console.log('Available centre data', availableCentreList.map((centre) => ({
-            center_id: centre.center_id,
-            district_name: centre.district_name,
-            block_name: centre.block_name,
-            address: centre.address,
-            fee_type: centre.fee_type,
-            pincode: centre.pincode,
-            session: centre.sessions.map(({ date, vaccine, available_capacity }) => ({ date, vaccine, available_capacity }))
-        })));
-        if (availableCentreList.length > 0) {
-            availableCentreList.forEach((centre) => {
-                const availableDetail = centre.sessions.reduce((current, value) => {
-                    return current + value.date + ' ' + value.available_capacity + '\n';
-                }, '')
-                nodenotifier.notify({
-                    title: centre.district_name + ' ' + centre.address,
-                    message: availableDetail,
-                    wait: false
-                })
-            })
-        }
+        // console.log('Available centre data', availableCentreList.map((centre) => ({
+        //     center_id: centre.center_id,
+        //     district_name: centre.district_name,
+        //     block_name: centre.block_name,
+        //     address: centre.address,
+        //     fee_type: centre.fee_type,
+        //     pincode: centre.pincode,
+        //     session: centre.sessions.map(({ date, vaccine, available_capacity }) => ({ date, vaccine, available_capacity }))
+        // })));
+        // if (availableCentreList.length > 0) {
+        //     availableCentreList.forEach((centre) => {
+        //         const availableDetail = centre.sessions.reduce((current, value) => {
+        //             return current + value.date + ' ' + value.available_capacity + '\n';
+        //         }, '')
+        //         nodenotifier.notify({
+        //             title: centre.district_name + ' ' + centre.address,
+        //             message: availableDetail,
+        //             wait: false
+        //         })
+        //     })
+        // }
+        emitToSocket(AVAIL_DETAIL, availableCentreList);
     } catch (error) {
         console.log(error)
     }
@@ -54,9 +58,10 @@ const prepareDistrictList = async () => {
 }
 const tracker = async () => {
     await prepareDistrictList();
-    cron.schedule('*/30 * * * * *', async () => {
+    cron.schedule('*/10 * * * * *', async () => {
         await prepareCentreList();
-    })
+    });
+    // task.stop();
 }
 
 export default tracker;
