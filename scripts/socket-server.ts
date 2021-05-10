@@ -17,7 +17,7 @@ let io: Server;
 export const initSocket = (server: http.Server) => {
     io = new Server(server, {
         cors: {
-            origin: ['http://localhost:3000', 'https://cowin-tracker-frontend.vercel.app/']
+            origin: ['http://localhost:3000', 'https://cowin-tracker-frontend.vercel.app']
         }
     });
 
