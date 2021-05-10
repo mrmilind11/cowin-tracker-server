@@ -24,10 +24,12 @@ export class CowinService {
 
     public static async getDistrictList(stateCode: number): Promise<IDistricts[]> {
         try {
+            console.log('District URL', `${DIST_BY_STATE_URL}/${stateCode}`)
             const response = await fetch(`${DIST_BY_STATE_URL}/${stateCode}`, { headers: { 'User-Agent': 'Mozilla/5.0' } });
             const responseJson: IDistrictResponse = await response.json();
             return responseJson.districts || [];
         } catch (error) {
+            console.log('Error occured districts', error);
             return [];
         }
     }
