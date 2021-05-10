@@ -18,26 +18,24 @@ export class CowinService {
             const responseJson: ICentreListResponse = await response.json();
             return responseJson.centers || [];
         } catch (error) {
+            console.log('Centre Load Error', error);
             return [];
         }
     }
 
     public static async getDistrictList(stateCode: number): Promise<IDistricts[]> {
         try {
-            console.log('District URL', `${DIST_BY_STATE_URL}/${stateCode}`)
             const response = await fetch(`${DIST_BY_STATE_URL}/${stateCode}`, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-            console.log(response);
-            const responseText = await response.text();
-            console.log(responseText);
             const responseJson: IDistrictResponse = await response.json();
             return responseJson.districts || [];
         } catch (error) {
             console.log('Error occured districts', error);
-            return [];
+            return delhiDistricts;
         }
     }
 }
 
+const delhiDistricts = [{ "district_id": 141, "district_name": "Central Delhi" }, { "district_id": 145, "district_name": "East Delhi" }, { "district_id": 140, "district_name": "New Delhi" }, { "district_id": 146, "district_name": "North Delhi" }, { "district_id": 147, "district_name": "North East Delhi" }, { "district_id": 143, "district_name": "North West Delhi" }, { "district_id": 148, "district_name": "Shahdara" }, { "district_id": 149, "district_name": "South Delhi" }, { "district_id": 144, "district_name": "South East Delhi" }, { "district_id": 150, "district_name": "South West Delhi" }, { "district_id": 142, "district_name": "West Delhi" }]
 interface ICentreListResponse {
     centers: IVaccineCentre[];
 }
