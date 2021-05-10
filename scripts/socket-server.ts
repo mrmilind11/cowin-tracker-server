@@ -1,8 +1,11 @@
 import http from 'http';
+import { Subject, Observable } from 'rxjs';
 import { Server, Socket } from 'socket.io';
 
-const clientSet = new Set();
 let io: Server;
+
+const clientAdded = new Subject<string>();
+const clientRemoved = new Subject<string>();
 
 export const initSocket = (server: http.Server) => {
     io = new Server(server, {
@@ -12,21 +15,25 @@ export const initSocket = (server: http.Server) => {
     });
 
     io.on('connect', (socket: Socket) => {
-        console.log('Connected to client:', socket.id);
-        clientSet.add(socket.id);
-        console.log('Total clients', clientSet);
-        emitToSocket('CONNECTED', { 'data': 'You are connected...' })
+        clientAdded.next(socket.id);
         socket.on('disconnect', () => {
-            clientSet.delete(socket.id);
-            console.log('disconnected', socket.id);
-            console.log('Total clients', clientSet);
+            clientRemoved.next(socket.id);
         })
     })
 }
 
-export const emitToSocket = (message: string, data: any) => {
-    if (io && clientSet.size > 0) {
-        console.log('Emitted');
+export const emitToSocket = (message: string, data: any, id?: string) => {
+    if (id) {
+        io.to(id).emit(message, data);
+    } else {
         io.emit(message, data);
     }
+}
+
+export const onClientAdded = (): Observable<string> => {
+    return clientAdded.asObservable();
+}
+
+export const onClientRemoved = (): Observable<string> => {
+    return clientRemoved.asObservable();
 }
