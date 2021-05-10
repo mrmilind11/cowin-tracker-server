@@ -1,16 +1,6 @@
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 
-// export class SocketServer {
-//     private clientSet = new Set();
-
-//     private io: Server = new Server();
-
-
-//     public get totalClients () {
-//         return clientSet.size;
-//     }
-// }
 const clientSet = new Set();
 let io: Server;
 
@@ -21,11 +11,11 @@ export const initSocket = (server: http.Server) => {
         }
     });
 
-    io.on('connection', (socket: Socket) => {
+    io.on('connect', (socket: Socket) => {
         console.log('Connected to client:', socket.id);
         clientSet.add(socket.id);
         console.log('Total clients', clientSet);
-
+        emitToSocket('CONNECTED', { 'data': 'You are connected...' })
         socket.on('disconnect', () => {
             clientSet.delete(socket.id);
             console.log('disconnected', socket.id);

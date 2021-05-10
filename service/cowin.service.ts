@@ -26,7 +26,6 @@ export class CowinService {
     public static async getDistrictList(stateCode: number): Promise<IDistricts[]> {
         try {
             const response = await fetch(`${DIST_BY_STATE_URL}/${stateCode}`, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-            console.log(response);
             const responseJson: IDistrictResponse = await response.json();
             return responseJson.districts || [];
         } catch (error) {
