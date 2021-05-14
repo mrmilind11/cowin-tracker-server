@@ -25,40 +25,44 @@ const prepareCentreList = async () => {
             }
         }).filter(({ sessions }) => sessions.length > 0);
         console.log('Available Centre', availableCentreList.length);
-        // console.log('Available centre data', availableCentreList.map((centre) => ({
-        //     center_id: centre.center_id,
-        //     district_name: centre.district_name,
-        //     block_name: centre.block_name,
-        //     address: centre.address,
-        //     fee_type: centre.fee_type,
-        //     pincode: centre.pincode,
-        //     session: centre.sessions.map(({ date, vaccine, available_capacity }) => ({ date, vaccine, available_capacity }))
-        // })));
+        console.log('Available centre data', availableCentreList.map((centre) => ({
+            center_id: centre.center_id,
+            district_name: centre.district_name,
+            block_name: centre.block_name,
+            address: centre.address,
+            fee_type: centre.fee_type,
+            pincode: centre.pincode,
+            session: centre.sessions.map(({ date, vaccine, available_capacity }) => ({ date, vaccine, available_capacity }))
+        })));
         // if (availableCentreList.length > 0) {
-        //     availableCentreList.forEach((centre) => {
-        //         const availableDetail = centre.sessions.reduce((current, value) => {
-        //             return current + value.date + ' ' + value.available_capacity + '\n';
-        //         }, '')
-        //         nodenotifier.notify({
-        //             title: centre.district_name + ' ' + centre.address,
-        //             message: availableDetail,
-        //             wait: false
-        //         })
-        //     })
+        availableCentreList.forEach((centre) => {
+            const availableDetail = centre.sessions.reduce((current, value) => {
+                return current + value.date + ' ' + value.available_capacity + '\n';
+            }, '')
+            nodenotifier.notify({
+                title: centre.district_name + ' ' + centre.address,
+                message: availableDetail,
+                wait: false
+            })
+        })
         // }
-        emitToSocket(AVAIL_DETAIL, availableCentreList);
+        // emitToSocket(AVAIL_DETAIL, availableCentreList);
     } catch (error) {
         console.log(error)
     }
 }
 
 const prepareDistrictList = async () => {
-    districtList = await CowinService.getDistrictList(STATE_CODE);
-    districtList.push({ district_id: 188, district_name: 'Gurgaon' })
+    // districtList = await CowinService.getDistrictList(STATE_CODE);
+    // districtList.push({ district_id: 188, district_name: 'Gurgaon' })
+    districtList.push({
+        district_id: 313
+        , district_name: 'Gwalior'
+    })
 }
 const tracker = async () => {
     await prepareDistrictList();
-    cron.schedule('*/15 * * * * *', async () => {
+    cron.schedule('*/10 * * * * *', async () => {
         await prepareCentreList();
     });
     // task.stop();
